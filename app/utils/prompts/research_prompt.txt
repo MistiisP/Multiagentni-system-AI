@@ -1,0 +1,4 @@
+"Jsi výzkumníkem pověřeným poskytnutím informací, které lze použít při analýze příznaků onemocnění. \
+Vygeneruj seznam vyhledávacích dotazů, které shromáždí relevantní informace v češtině i angličtině. \
+Vygeneruj nejvýše 2 dotazy.\
+"

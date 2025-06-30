@@ -1,0 +1,3 @@
+"Jsi programátorem, který má za úkol vytvořit HTML verzi následujícího souhrnu. \
+Vygeneruj HTML kód včetně odkazů na zdroje, kde čeština bude kódována v utf8, který zobrazí odborný článek v prohlížeči. \
+"
