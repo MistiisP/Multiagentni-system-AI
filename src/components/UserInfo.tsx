@@ -1,0 +1,1 @@
+// div where is user avatar, name and which model he is using displayed
