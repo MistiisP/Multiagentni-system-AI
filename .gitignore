@@ -1,0 +1,85 @@
+# Environment variables .env file
+*.env
+*.env.*
+!*.env.example
+
+
+# Adresáře IDE
+.vscode/
+.idea/
+
+# Logy
+*.log
+logs
+*.log.*
+
+# Soubory operačního systému
+.DS_Store
+Thumbs.db
+
+# Virtuální prostředí
+venv/
+.venv/
+env/
+
+# Python cache a zkompilované soubory
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Backend
+backend/build/
+backend/dist/
+backend/*.egg-info
+
+# Databázové soubory
+*.sqlite3
+*.db
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/coverage/
+
+# Lokální Vite/React env soubory
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+
+# Logy z npm/yarn
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv
+venv/
+env/
+
+# Langchain/LangGraph checkpoints
+checkpoints/
+
+
+# Frontend (React)
+frontend/node_modules/
+frontend/build
+.DS_Store
+frontend/.vite/
+frontend/coverage/
+
+# Logy z npm/yarn
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Databáze
+*.sqlite3
+*.db
+

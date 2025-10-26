@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  # Služba pro databázi
+  db:
+    image: postgres:15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=agent_system
+    ports:
+      - "5432:5432"
+
+  # Služba pro backend
+  backend:
+    build:
+      context: ./backend  # Říká Dockeru, aby hledal Dockerfile v složce 'backend'
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app   # Připojí kód backendu pro hot-reloading
+    env_file:
+      - ./backend/.env   # Načte .env soubor z backend složky
+    depends_on:
+      - db               # Spustí se až po databázi
+
+  # Služba pro frontend
+  frontend:
+    build:
+      context: ./frontend # Říká Dockeru, aby hledal Dockerfile v složce 'frontend'
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app  # Připojí kód frontendu pro hot-reloading
+    depends_on:
+      - backend          # (Volitelné) Spustí se až po backendu
+
+volumes:
+  postgres_data:

@@ -1,0 +1,128 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap");
+
+:root {
+  font-family: "Poppins", sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  
+  background: url('../assets/BackgroundHome.jpg') no-repeat;
+          
+  background-attachment: fixed;
+
+
+
+
+  text-align: center;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+ 
+}
+
+
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+
+
+body {
+  margin: 0;
+}
+
+h1 {
+  font-size: 3em;
+  line-height: 1;
+}
+
+h2 {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+h4 {
+  font-size: 1rem;
+  line-height: 0.5;
+}
+
+
+
+
+
+
+
+
+/* FOOTER */
+.footer {
+  background-color: #282c34;
+  color: white;
+  text-align: center;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.footer p { 
+  font-size: 10px;
+  color: #a9a9a9;
+}
+
+
+
+
+
+
+
+
+/* SCROLLBAR */
+.-webkit-scrollbar {
+  width: 8px; 
+}
+
+.-webkit-scrollbar-track {
+  background: #202123; 
+}
+
+.-webkit-scrollbar-thumb {
+  background-color: #4d4d4f; 
+  border-radius: 10px; 
+  border: 2px solid #202123; 
+}
+
+.-webkit-scrollbar-thumb:hover {
+  background-color: #6a6a6e; 
+}
+
+  
+
+
+
+/* LOG */
+.loading-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 50vh;
+}
+
+
+
+

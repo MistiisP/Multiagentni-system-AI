@@ -1,0 +1,322 @@
+
+
+.settings-page {
+  display: flex;
+  background-color: #202123;
+  color: rgba(255, 255, 255, 0.9);
+  overflow: hidden;
+  height: 100vh;
+}
+
+
+
+.settings-sidebar {
+  width: 14%;
+  background-color: #343541;
+  border-right: 1px solid #4d4d4f;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.settings-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #343541;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #444;
+}
+
+.settings-sidebar-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.settings-sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.settings-sidebar li {
+  padding: 10px 15px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.settings-sidebar li:hover {
+  background-color: #4d4d4f;
+}
+
+.settings-sidebar li.active {
+  background-color: #0066cc;
+  color: white;
+}
+
+.settings-backtoDashboard {
+  margin-top: auto;
+}
+
+.back-button {
+  width: 100%;
+  padding: 0.7rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 550;
+  cursor: pointer;
+  background-color: #0066cc;
+  color: white;
+  border: none;
+  text-align: center;
+  transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+  background-color: #005bb5;
+}
+
+
+
+.settings-main {
+  flex: 1;
+  padding: 3rem;
+  overflow-y: auto;
+}
+
+
+
+.graph-select {
+  background-color: #212121;
+  color: rgba(255, 255, 255, 0.9);
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 0.5rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+
+.graph-select:focus {
+  outline: none;
+  border-color: #0066cc;
+}
+
+.graph-select option {
+  background-color: #212121;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+
+
+.graph-analysis {
+  display: flex;
+  flex-direction: column;
+  background-color: #202123;
+  color: rgba(255, 255, 255, 0.9);
+  padding: 2rem;
+  min-height: 100vh;
+  overflow-y: auto;
+}
+
+.graph-analysis h2,
+.graph-analysis h3,
+.graph-analysis h5 {
+  color: #ffffff;
+}
+
+.graph-analysis h2 {
+  font-size: 1.6rem;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+.graph-analysis h3 {
+  font-size: 1.3rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+.graph-analysis h5 {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.graph-analysis table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  background-color: #343541;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.graph-analysis th,
+.graph-analysis td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #444;
+}
+
+.graph-analysis th {
+  background-color: #4d4d4f;
+  font-weight: 600;
+}
+
+.graph-analysis tr:nth-child(even) {
+  background-color: #2a2a2a;
+}
+
+.graph-analysis tr:hover {
+  background-color: #4d4d4f45;
+}
+
+
+
+.graph-analysis button {
+  background-color: #0066cc;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease;
+}
+
+.graph-analysis button:hover {
+  background-color: #005bb5;
+}
+
+
+
+.execution-detail {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  height: auto;
+  width: 100%;
+  margin-top: 2rem;
+}
+
+.execution-detail > div {
+  background-color: #343541;
+  padding: 2rem;
+  border-radius: 12px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+}
+
+.execution-detail pre {
+  background-color: #212121;
+  padding: 1rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.8);
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.execution-detail li {
+  margin-bottom: 0.75rem;
+  background-color: #212121;
+  border-left: 4px solid #0066cc;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.execution-detail li:hover {
+  background-color: #2a2a2a;
+}
+
+.execution-detail small {
+  display: block;
+  margin-top: 0.5rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.8rem;
+}
+
+
+
+.timeline-container {
+  display: flex;
+  width: 100%;
+  height: 28px;
+  background-color: #333;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.timeline-bar {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 12px;
+  text-shadow: 1px 1px 2px black;
+  transition: width 0.5s ease-in-out;
+}
+
+.timeline-bar:nth-child(odd) {
+  background-color: #4a90e2;
+}
+
+.timeline-bar:nth-child(even) {
+  background-color: #50e3c2;
+}
+
+.timeline-label {
+  white-space: nowrap;
+  padding: 0 5px;
+}
+
+
+@media (max-width: 900px) {
+  .settings-page {
+    flex-direction: column;
+  }
+
+  .settings-sidebar {
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    justify-content: space-around;
+    border-right: none;
+    border-bottom: 1px solid #444;
+  }
+
+  .settings-main {
+    padding: 2rem;
+  }
+
+  .graph-analysis {
+    padding: 1rem;
+  }
+
+  .execution-detail > div {
+    padding: 1rem;
+    max-width: 95%;
+  }
+}
+
+
+
+
+
+
+
+
+
+
