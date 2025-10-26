@@ -17,7 +17,7 @@ tavily-python
 passlib
 python-jose[cryptography]
 python-multipart
-google-search-results
+google-search-results>=2.4.2
 langgraph-checkpoint-sqlite
 bs4
 duckduckgo-search
@@ -32,8 +32,3 @@ transformers
 sentencepiece
 torch
 yake
-bs4
-duckduckgo
-ddgs
-google-search-results>=2.4.2
-duckduckgo-search
