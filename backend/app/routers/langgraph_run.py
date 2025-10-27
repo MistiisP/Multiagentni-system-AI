@@ -94,7 +94,6 @@ async def websocket_run_graph(
             print(f"  -> input_data: {input_data}")
             print(f"  -> output_data: {output_data}")
             
-            
             message_content = ""
             if "messages" in node_output and node_output["messages"]:
                 last_message = node_output["messages"][-1]
