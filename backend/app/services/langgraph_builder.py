@@ -417,8 +417,8 @@ async def build_langgraph_from_db(graph_id: int, db: AsyncSession):
                     api_key = matching_model.api_key
                     print(f"[LOG] Agent '{agent_name}' používá model '{matching_model.name}' pro tool '{tool_name}'.")
                 else:
-                    print(f"VAROVÁNÍ: Agent '{agent_name}' nemá model pro '{required_provider}', použit .env fallback.")
-                    api_key = os.getenv(f"{required_provider.upper()}_API_KEY")
+                    print(f"VAROVÁNÍ: Agent '{agent_name}' nemá model pro '{required_provider}'")
+                    continue
             
             get_tool_func = tool_config["get_tool"]
             tool_args = {}
