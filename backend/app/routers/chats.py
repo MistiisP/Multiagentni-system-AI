@@ -299,7 +299,7 @@ async def get_agents_in_chat(
     """
     result = await db.execute(
         select(models.Chat).options(
-            selectinload(models.Chat.agents).selectinload(models.Agent.model_ai)
+            selectinload(models.Chat.agents).selectinload(models.Agent.models_ai)
         )
         .where(models.Chat.id == chat_id, models.Chat.user_id == current_user.id)
     )
@@ -315,7 +315,13 @@ async def get_agents_in_chat(
                 name=agent.name,
                 prompt=agent.prompt,
                 code=agent.code,
-                model_ai_name=agent.model_ai.name if agent.model_ai else "Neznámý model"
+                models_ai=[
+                    schemas.ModelOfAIResponse(
+                        id=m.id,
+                        name=m.name,
+                        model_identifier=m.model_identifier
+                    ) for m in agent.models_ai
+                ] if agent.models_ai else [],
             )
         )
         

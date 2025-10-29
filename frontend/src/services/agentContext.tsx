@@ -28,12 +28,19 @@
 import React, { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
 import { useAuth } from './authContext';
 
+
+export interface ModelOfAI {
+    id: number;
+    name: string;
+    model_identifier: string;
+}
+
 export interface Agent {
     id: number;
     description: string | null;
     name: string;
     prompt: string;
-    model_ai_name: string;
+    models_ai: ModelOfAI[];
     tools: string[] | null;
     code: string | null;
 }
@@ -42,7 +49,7 @@ export interface AgentCreateData {
     name: string;
     description: string | null;
     prompt: string;
-    model_ai_id: number;
+    model_ids: number[];
     tools: string[] | null;
     code: string | null;
 }

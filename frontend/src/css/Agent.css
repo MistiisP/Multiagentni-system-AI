@@ -70,6 +70,29 @@
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
+.react-select__menu {
+  background: #23262f !important;
+  color: #f1f1f1 !important;
+}
+
+.react-select__option {
+  background: #23262f !important;
+  color: #f1f1f1 !important;
+}
+
+.react-select__option--is-selected {
+  background: #6c63ff !important;
+  color: #fff !important;
+}
+
+.react-select__option--is-focused {
+  background: #393e4b !important;
+}
+
+
+
+
+
 .input-icon {
   position: absolute;
   right: 20px;

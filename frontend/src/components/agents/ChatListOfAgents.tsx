@@ -47,7 +47,7 @@ const DetailsInfoAgent: React.FC<DetailsInfoAgentProps> = ({ chatId }) => {
             <div className="agent-info">
               <strong className="chat-agent-name">{agent.name}</strong>
               <p className="agent-prompt"><strong>Prompt: </strong>{agent.prompt}</p>
-              <p className="agent-model"><strong>Model: </strong>{agent.model_ai_name}</p>
+              <p className="agent-model"><strong>Model: </strong>{agent.models_ai && agent.models_ai.length > 0 ? agent.models_ai.map((m: any) => m.name).join(", ") : "Žádné modely"}</p>
             </div>
           </li>
         ))}

@@ -11,11 +11,12 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain.tools import Tool
 from langchain_openai import ChatOpenAI
 from langgraph.graph import StateGraph, END
-from langchain.callbacks import get_openai_callback
+from langchain.callbacks.manager import get_openai_callback
 from langchain.agents import create_tool_calling_agent, AgentExecutor
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
+from langchain_core.messages import ToolMessage
 
 from ..db import models
 from ..utils.tools import TOOL_IMPLEMENTATIONS
@@ -38,16 +39,27 @@ def sanitize_name(name: str) -> str:
     return re.sub(r'[^a-zA-Z0-9_-]', '_', name)
 
 
-def get_llm_instance(model: models.ModelOfAI):
-    api_key = model.api_key if model and model.api_key else os.getenv("OPENAI_API_KEY")
-    model_name = model.model_identifier if model and model.model_identifier else "gpt-4o"
+def get_llm_instance(agent: models.Agent):
+    openai_model = next(
+        (m for m in agent.models_ai if m.provider == "openai"),
+        None
+    )
+    
+    if openai_model:
+        api_key = openai_model.api_key
+        model_name = openai_model.model_identifier or "gpt-4o"
+    else:
+        api_key = os.getenv("OPENAI_API_KEY")
+        model_name = "gpt-4o"
+    
     if not api_key:
-        raise ValueError(f"Chybí API klíč pro model '{model_name}'.")
+        raise ValueError(f"Chybí API klíč pro model '{model_name}' u agenta '{agent.name}'.")
+    
     return ChatOpenAI(model=model_name, api_key=api_key, temperature=0.1)
 
 
 def create_specialist_node(agent_model: models.Agent, tools: List[Tool]):
-    llm = get_llm_instance(agent_model.model_ai)
+    llm = get_llm_instance(agent_model)
     prompt = ChatPromptTemplate.from_messages([
         ("system", f"""Jsi specialista {agent_model.name}. Tvá role: {agent_model.prompt}. 
 Použij dostupné nástroje k vyřešení zadaného úkolu a vrať výsledek. Můžeš jenom vyřešit svojí část úkolu.
@@ -97,7 +109,6 @@ VÝSTUP:
         duration_ms = int((time.time() - start_time) * 1000)
 
         log_input = sub_args.get("__arg1", sub_args)
-        # Pokud je vstup slovník, převedeme ho na čitelný string
         if isinstance(log_input, dict):
             log_input = ", ".join(f"{k}: {v}" for k, v in log_input.items())
 
@@ -114,7 +125,7 @@ VÝSTUP:
 
 
 def create_manager_llm(agent_model: models.Agent, specialist_tools: List[Tool]):
-    llm = get_llm_instance(agent_model.model_ai)
+    llm = get_llm_instance(agent_model)
     prompt = ChatPromptTemplate.from_messages([
         ("system", f""""Jsi {agent_model.name}, projektový manažer.
 Tvým úkolem je řídit ostatní agenty (specialisty), rozdělit úkol na kroky a koordinovat jejich práci, dokud nebude finální výstup kompletní.
@@ -183,7 +194,7 @@ async def build_langgraph_from_db(graph_id: int, db: AsyncSession):
             - The manager agent's name (entry point).
     """
     stmt = select(models.Graph).where(models.Graph.id == graph_id).options(
-        selectinload(models.Graph.nodes).selectinload(models.Node.agent).selectinload(models.Agent.model_ai)
+        selectinload(models.Graph.nodes).selectinload(models.Node.agent).selectinload(models.Agent.models_ai)
     )
     db_graph = (await db.execute(stmt)).unique().scalar_one_or_none()
     if not db_graph:
@@ -214,17 +225,6 @@ async def build_langgraph_from_db(graph_id: int, db: AsyncSession):
         for agent in specialist_models
     ])
 
-    real_tools_map = {}
-    for tool_name, get_tool_func in TOOL_IMPLEMENTATIONS.items():
-        try:
-            tool_args = {}
-            if 'api_key' in inspect.signature(get_tool_func).parameters:
-                tool_args["api_key"] = os.getenv("TAVILY_API_KEY")
-            real_tools_map[tool_name] = get_tool_func(**tool_args)
-            print(f"[LOG] Tool '{tool_name}' byl úspěšně načten.")
-        except Exception as e:
-            print(f"CHYBA při načítání nástroje '{tool_name}': {e}")
-
     builder = StateGraph(AgentState)
 
     manager_llm = create_manager_llm(manager_model, specialist_tools_for_delegation)
@@ -239,11 +239,27 @@ async def build_langgraph_from_db(graph_id: int, db: AsyncSession):
         compact = []
         if messages and isinstance(messages[0], HumanMessage):
             compact.append(messages[0])
-        tail = list(messages[-12:]) if len(messages) > 12 else list(messages[1:])
-        for m in tail:
-            if isinstance(m, (AIMessage, ToolMessage, HumanMessage)):
-                compact.append(m)
-                
+        i = 1
+        while i < len(messages):
+            msg = messages[i]
+            
+            if isinstance(msg, AIMessage) and msg.tool_calls:
+                compact.append(msg)
+                if i + 1 < len(messages) and isinstance(messages[i + 1], ToolMessage):
+                    compact.append(messages[i + 1])
+                    i += 2
+                    continue
+                else:
+                    i += 1
+            
+            if isinstance(msg, (AIMessage, ToolMessage, HumanMessage)):
+                compact.append(msg)
+            
+            i += 1
+        
+        if len(compact) > 20:
+            compact = [compact[0]] + compact[-19:]
+        
         specialist_outputs = []
         for msg in messages:
             if isinstance(msg, ToolMessage):
@@ -381,7 +397,41 @@ async def build_langgraph_from_db(graph_id: int, db: AsyncSession):
     for agent_model in specialist_models:
         agent_name = sanitize_name(agent_model.name)
         agent_tool_names = agent_model.tools if agent_model.tools else []
-        agent_tools = [real_tools_map[name] for name in agent_tool_names if name in real_tools_map]
+        
+        agent_tools = []
+        for tool_name in agent_tool_names:
+            if tool_name not in TOOL_IMPLEMENTATIONS:
+                print(f"CHYBA: Nástroj '{tool_name}' není definován.")
+                continue
+            
+            tool_config = TOOL_IMPLEMENTATIONS[tool_name]
+            required_provider = tool_config.get("required_provider")
+            
+            api_key = None
+            if required_provider:
+                matching_model = next(
+                    (m for m in agent_model.models_ai if m.provider == required_provider),
+                    None
+                )
+                if matching_model:
+                    api_key = matching_model.api_key
+                    print(f"[LOG] Agent '{agent_name}' používá model '{matching_model.name}' pro tool '{tool_name}'.")
+                else:
+                    print(f"VAROVÁNÍ: Agent '{agent_name}' nemá model pro '{required_provider}', použit .env fallback.")
+                    api_key = os.getenv(f"{required_provider.upper()}_API_KEY")
+            
+            get_tool_func = tool_config["get_tool"]
+            tool_args = {}
+            if 'api_key' in inspect.signature(get_tool_func).parameters:
+                tool_args["api_key"] = api_key
+            
+            try:
+                tool_instance = get_tool_func(**tool_args)
+                agent_tools.append(tool_instance)
+                print(f"[LOG] Tool '{tool_name}' načten pro '{agent_name}'.")
+            except Exception as e:
+                print(f"CHYBA při načítání '{tool_name}' pro '{agent_name}': {e}")
+
         builder.add_node(agent_name, create_specialist_node(agent_model, agent_tools))
 
     router = create_manager_router(manager_name, [sanitize_name(a.name) for a in specialist_models])

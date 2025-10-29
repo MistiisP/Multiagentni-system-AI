@@ -5,6 +5,7 @@ from typing import Optional
 TOOL_DEFINITION = {
     "name": "tavily_search",
     "description": "Vyhledá informace na internetu pomocí Tavily.",
+    "required_provider": "tavily",
     "parameters": [
         {
             "name": "query",
@@ -16,14 +17,13 @@ TOOL_DEFINITION = {
 
 def get_tool(api_key: Optional[str] = None) -> Tool:
     if not api_key:
-        raise ValueError("Tavily Search tool need an API klíč.")
+        raise ValueError("Tavily Search tool need an API key")
 
     tavily_tool_instance = TavilySearchResults(
         max_results=1,
         tavily_api_key=api_key
     )
 
-    # langchain tool object
     return Tool(
         name=TOOL_DEFINITION["name"],
         func=tavily_tool_instance.run,

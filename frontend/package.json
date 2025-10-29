@@ -23,6 +23,7 @@
     "react-hook-form": "^7.60.0",
     "react-markdown": "^10.1.0",
     "react-router-dom": "^7.6.3",
+    "react-select": "^5.10.2",
     "reactflow": "^11.11.4",
     "viz.js": "^2.1.2"
   },

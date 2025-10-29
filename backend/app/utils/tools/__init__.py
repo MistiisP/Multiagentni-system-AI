@@ -9,7 +9,6 @@ TOOL_DIR = os.path.dirname(__file__)
 for filename in os.listdir(TOOL_DIR):
     if filename.endswith(".py") and not filename.startswith("__"):
         module_name = f"app.utils.tools.{filename[:-3]}"
-        
         try:
             module = importlib.import_module(module_name)
             
@@ -20,7 +19,11 @@ for filename in os.listdir(TOOL_DIR):
                 if hasattr(module, "get_tool"):
                     tool_name = definition.get("name")
                     if tool_name:
-                        TOOL_IMPLEMENTATIONS[tool_name] = module.get_tool
+                        TOOL_IMPLEMENTATIONS[tool_name] = {
+                           "get_tool": module.get_tool,
+                           "required_provider": definition.get("required_provider"),
+                           "description": definition.get("description")
+                        }
 
         except ImportError as e:
             print(f"Chyba při importu nástroje {module_name}: {e}")
@@ -37,6 +40,7 @@ from typing import Optional
 TOOL_DEFINITION = {
     "name": 
     "description":
+    "required_provider":
     "parameters": [
         {
             "name": "query",

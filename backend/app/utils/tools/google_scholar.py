@@ -5,6 +5,7 @@ from langchain.tools import Tool
 TOOL_DEFINITION = {
     "name": "google_scholar_search",
     "description": "Vyhledá odborné články pomocí Google Scholar.",
+    "required_provider": None,
     "parameters": [
         {
             "name": "query",

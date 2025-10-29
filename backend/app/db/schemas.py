@@ -60,12 +60,22 @@ class RenameName(BaseModel):
         
         
         
+        
+class ModelOfAIResponse(BaseModel):
+    id: int
+    name: str
+    model_identifier: str
+
+    class Config:
+        from_attributes = True
+        
+        
 # Agents
 class AgentCreate(BaseModel):
     name: str
     description: Optional[str] = None
     prompt: str
-    model_ai_id: int
+    model_ids: List[int]
     code: Optional[str] = None
     tools: Optional[List[str]] = None
     
@@ -77,7 +87,7 @@ class AgentResponse(BaseModel):
     name: str
     description: Optional[str] = None
     prompt: str
-    model_ai_name: str
+    models_ai: List[ModelOfAIResponse]
     tools: Optional[List[str]] = None
     code: Optional[str] = None
     
@@ -88,7 +98,7 @@ class AgentUpdate(BaseModel):
     name: str | None = None
     description: str | None = None
     prompt: str | None = None
-    model_ai_id: int | None = None
+    model_ids: Optional[List[int]] = None
     tools: Optional[List[str]] = None
     code: str | None = None
                
@@ -100,6 +110,7 @@ class AgentUpdate(BaseModel):
 
 
 #AI models
+
 class AIModelResponse(BaseModel):
     id: int
     name: str

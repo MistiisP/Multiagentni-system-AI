@@ -1,7 +1,7 @@
 /*
  * React component for creating a new agent in the system.
  * Features:
- * - Allows the user to enter name, description, prompt, optional code, select an AI model, and choose tools.
+ * - Allows the user to enter name, description, prompt, optional code, select multiple AI models, and choose tools.
  * - Loads available AI models (from useAI_Model context) and tools (from useTools context).
  * - Sends data to the backend using the createAgent function from agentContext.
  * - Displays validation errors and possible submission errors.
@@ -17,28 +17,27 @@ import { useAI_Model } from '../../services/ai_modelContext';
 import { useTools } from '../../services/toolsContext';
 import '../../css/Agent.css';
 
+import Select from 'react-select';
+
 type NewAgentFormData = {
   name: string; 
   description?: string;
   prompt: string; 
-  model_ai_id: string; 
+  model_ids?: string[];
   tools?: string[];
   code?: string; 
 }
 
-
 const AgentNewForm: React.FC = () => {
-  const { register, handleSubmit, formState: { errors }, reset } = useForm<NewAgentFormData>();
-  const { createAgent} = useAgents();
+  const { register, handleSubmit, setValue, formState: { errors }, reset } = useForm<NewAgentFormData>();
+  const { createAgent } = useAgents();
   const { aiModels, fetchAIModels } = useAI_Model();
   const [formError, setFormError] = useState<string | null>(null);
   const { tools } = useTools();
 
-
   useEffect(() => {
     fetchAIModels();
   }, [fetchAIModels]);
-
 
   const onSubmit = async (data: NewAgentFormData) => {
     setFormError(null);
@@ -50,19 +49,26 @@ const AgentNewForm: React.FC = () => {
       selectedTools = [data.tools];
     }
 
+    let selectedModelIds: number[] = [];
+    if (Array.isArray(data.model_ids)) {
+      selectedModelIds = data.model_ids.map(id => Number(id));
+    } else if (typeof data.model_ids === "string") {
+      selectedModelIds = [Number(data.model_ids)];
+    }
+
+    if (selectedModelIds.length === 0) {
+      setFormError("Prosím, vyberte alespoň jeden AI model.");
+      return;
+    }
+
     const dataToSend: AgentCreateData = {
         name: data.name,
         description: data.description || null,
         prompt: data.prompt,
-        model_ai_id: Number(data.model_ai_id),
+        model_ids: selectedModelIds,
         tools: selectedTools || [],
         code: data.code || null,
     };
-
-    if (isNaN(dataToSend.model_ai_id)) {
-        setFormError("Prosím, vyberte platný AI model.");
-        return;
-    }
 
     try {
       await createAgent(dataToSend);
@@ -87,25 +93,35 @@ const AgentNewForm: React.FC = () => {
           <textarea id="prompt" rows={5} placeholder='Prompt' {...register('prompt', { required: 'Prompt is required' })} />
           {errors.prompt && <span className="error">{errors.prompt.message}</span>}
         </div>
+
         <div className="form-group">
-          <select id="model_ai_id" {...register('model_ai_id', { required: 'AI Model is required' })}>
-            <option value="">Vyber AI model</option>
-            {aiModels.map(model => ( <option key={model.id} value={model.id}>{model.name}</option> ))}
-          </select>
-          {errors.model_ai_id && <span className="error">{errors.model_ai_id.message}</span>}
+          <label><strong>AI Modely (vyber alespoň jeden):</strong></label>
+          <Select id="model_ai_id" isMulti options={aiModels.map(model => ({
+              value: model.id,
+              label: `${model.name}${model.model_identifier ? ` (${model.model_identifier})` : ""}`
+            }))}
+            onChange={selected => {
+              setValue("model_ids", selected.map(opt => String(opt.value)));
+            }}
+            classNamePrefix="react-select"
+            placeholder="Vyberte modely..."
+          />
+          {errors.model_ids && <span className="error">{errors.model_ids.message}</span>}
         </div>
+
         <div className="form-group">
-          <label>Nástroje (tools):</label>
-            {tools.length === 0 && <div>Žádné nástroje nejsou dostupné.</div>}
+          <label><strong>Nástroje (tools):</strong></label>
+          {tools.length === 0 && <div>Žádné nástroje nejsou dostupné.</div>}
           {tools.map(tool => (
-            <label key={tool.name} style={{ marginRight: 10 }}>
-              <input type="checkbox" value={tool.name} {...register("tools")}/>
+            <label key={tool.name} style={{ display: 'block', marginBottom: 5 }}>
+              <input type="checkbox" value={tool.name} {...register("tools")} />
               {tool.name}{tool.description ? ` – ${tool.description}` : ""}
-            </label>))
-          }
+            </label>
+          ))}
         </div>
+        
         <div className="form-group">
-          <textarea id="code" rows={5} placeholder='Code (optional)' {...register('code')}/>
+          <textarea id="code" rows={5} placeholder='Code (optional)' {...register('code')} />
         </div>
         <button type="submit" className="new-agent-button">Create Agent</button>
         {formError && <div className="error-message">{formError}</div>}
@@ -115,5 +131,3 @@ const AgentNewForm: React.FC = () => {
 };
 
 export default AgentNewForm;
-
-

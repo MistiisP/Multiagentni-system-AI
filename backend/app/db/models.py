@@ -60,17 +60,44 @@ class ModelOfAI(Base):
     name = Column(String(255), nullable=False) 
     model_identifier = Column(String(255), nullable=True) 
     api_key = Column(String, nullable=True)
-    
-    agents = relationship("Agent", back_populates="model_ai")
+
+    agents = relationship("Agent", secondary="agent_model_link", back_populates="models_ai")
     user = relationship("User", back_populates="ai_models")
+
+    @property
+    def provider(self) -> str:
+        """ Choose the provider by model_identifier """
+        if not self.model_identifier:
+            return "unknown"
+        
+        identifier = self.model_identifier.lower()
+        
+        if identifier.startswith("gpt") or identifier.startswith("o1") or "openai" in identifier:
+            return "openai"
+        
+        if identifier.startswith("claude") or "anthropic" in identifier:
+            return "anthropic"
+        
+        if "tavily" in identifier:
+            return "tavily"
+        
+        if identifier.startswith("gemini") or "google" in identifier:
+            return "google"
+        
+        if identifier.startswith("command") or "cohere" in identifier:
+            return "cohere"
+        
+        if identifier.startswith("mistral") or "mixtral" in identifier:
+            return "mistral"
+        
+        return "unknown"
 
 
 class Agent(Base):
     __tablename__ = "agents"
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    model_ai_id = Column(Integer, ForeignKey("models_of_ai.id"), nullable=True)
-    
+
     name = Column(String(255), nullable=False, unique=True)
     description = Column(String(100), nullable=True) 
     prompt = Column(Text, nullable=True)
@@ -79,8 +106,15 @@ class Agent(Base):
     code = Column(Text, nullable=True)
     
     user = relationship("User", back_populates="agents")
-    model_ai = relationship("ModelOfAI", back_populates="agents")
+    models_ai = relationship("ModelOfAI", secondary="agent_model_link", back_populates="agents")
     chats = relationship("Chat", secondary="chat_agent_link", back_populates="agents")
+
+
+class AgentModelLink(Base):
+    """ m:n agents:models """
+    __tablename__ = "agent_model_link"
+    agent_id = Column(Integer, ForeignKey("agents.id"), primary_key=True)
+    model_id = Column(Integer, ForeignKey("models_of_ai.id"), primary_key=True)
 
 
 class ChatAgentLink(Base):

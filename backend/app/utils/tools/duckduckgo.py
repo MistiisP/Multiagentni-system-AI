@@ -5,6 +5,7 @@ from langchain.tools import Tool
 TOOL_DEFINITION = {
     "name": "duckduckgo_search",
     "description": "Vyhledá webové stránky pomocí DuckDuckGo.",
+    "required_provider": None,
     "parameters": [
         {
             "name": "query",
