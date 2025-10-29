@@ -131,12 +131,3 @@ If you make changes to SQLAlchemy moodels (`backend/app/db/models.py`), you need
     ```
 
 
-    
-********************************************************************
-- postgresql+asyncpg://test_user:test123@localhost:5433/MAS_system_db
-- test_user, password "test123", superuser
-- create new user 
-ALTER USER postgres WITH PASSWORD 'postgres';
-ALTER USER test_user WITH PASSWORD 'test123';
-
-SHOW port;
