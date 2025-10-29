@@ -1,23 +1,22 @@
-# Multi-Agent System s vizuálním editorem
+# Multi-Agent System with Visual Editor
 
-Tento projekt je multi-agentní systém postavený na technologiích FastAPI a React, který umožňuje uživatelům vizuálně vytvářet, spravovat a spouštět komplexní workflow (grafy) složené z AI agentů.
+This project is a multi-agent system built on FastAPI and React technologies, allowing users to visually create, manage and run complex workflows composed of AI agents.
 
-## Klíčové vlastnosti
+## Key Features
 
--   **Uživatelská autentizace:** Registrace a přihlašování uživatelů pomocí JWT tokenů.
--   **Správa agentů a AI modelů:** Uživatelé si mohou vytvářet vlastní agenty a propojovat je s různými AI modely (např. OpenAI).
--   **Vizuální editor workflow:** Drag-and-drop rozhraní pro sestavování grafů, kde uzly reprezentují agenty a hrany definují přechody mezi nimi.
--   **Chatovací rozhraní:** Interakce s agenty a grafy prostřednictvím chatu.
--   **Analytika:** Zobrazení statistik o využití agentů a historie spuštění grafů.
+-   **User Authentication:** User registration and login using JWT tokens.
+-   **Agents and AI models management:** Users can create custom agents and connect them with various AI Models (you need your own API key for these AI models).
+-   **Workflow Visual editor:** Drag-and-drop interface for building graphs, where nodes represent agents and edges define transitions between them.
+-   **Chat Interface:** Interaction with agents and graphs throught chat.
+-   **Analysis** Display statiscs about agent usage and graph execution history.
 
-
-## Použité technologie
+## Used technologies
 **Backend:**
 -   **Framework:** FastAPI
--   **Databáze:** PostgreSQL s SQLAlchemy (asynchronní)
--   **Migrace:** Alembic
--   **AI & Agenti:** LangChain, LangGraph
--   **Autentizace:** JWT, Passlib, python-jose
+-   **Database:** PostgreSQL s SQLAlchemy (asynchronous)
+-   **Migration:** Alembic
+-   **AI & Agents:** LangChain, LangGraph
+-   **Authentication:** JWT, Passlib, python-jose
 -   **Real-time:** WebSockets
 -   **Server:** Uvicorn
 
@@ -25,145 +24,108 @@ Tento projekt je multi-agentní systém postavený na technologiích FastAPI a R
 -   **Framework:** React s TypeScriptem
 -   **Build Tool:** Vite
 -   **Routing:** React Router
--   **Stavové kontejnery:** React Context
--   **Stylování:** Čisté CSS
+-   **State Management:** React Context
+-   **Styling:** Pure CSS
 
-**Infrastruktura:**
--   **Kontejnerizace:** Docker, Docker Compose
+**Infrastructure:**
+-   **Containerization:** Docker, Docker Compose
 
 
 
-## Struktura projektu
+## Project structure
 
 ```
 agent-system/
-├── backend/            # FastAPI aplikace
-│   ├── alembic/        # Databázové migrace
-│   ├── app/            # Hlavní logika aplikace
-│   │   ├── db/         # Modely, schémata, připojení k DB
-│   │   ├── routers/    # API endpointy
-│   │   ├── services/   # Business logika (autentizace, LangGraph builder)
-|   |   └── utils/tools # Logika pro agenty s nástroji
-│   ├── .env            # Konfigurace a klíče (lokální)
+├── backend/            # FastAPI app
+│   ├── alembic/        # Database migration
+│   ├── app/            # Main app logic
+│   │   ├── db/         # Models, schemas, DB connection
+│   │   ├── routers/    # API endpoints
+│   │   ├── services/   # Business logic (authentication, LangGraph builder)
+|   |   └── utils/tools # Tools for agents
 │   └── requirements.txt
 │
-├── frontend/           # React aplikace
+├── frontend/           # React application
 │   ├── src/
-│   │   ├── components/ # Komponenty
-|   |   ├── css/        # CSS stylování
-│   │   ├── pages/      # Stránky aplikace
-│   │   └── services/   # React Contexty pro správu stavu
-│   └── .env            # Konfigurace pro frontend
-│
-├── docker-compose.yml  # Konfigurace pro spuštění projektu v Dockeru
-└── README.md           # Tento soubor
+│   │   ├── components/ # Components
+|   |   ├── css/        # CSS styling
+│   │   ├── pages/      # Pages of application
+│   │   └── services/   # React Contexts for managing states
+├── docker-compose.yml  # Docker configuration
+└── README.md           # This file
 ```
 
 
+## Installation and Setup
 
+### Requirements
 
-
-
-
-## Instalace a spuštění
-
-### Požadavky
-
--   [Docker](https://www.docker.com/get-started) a Docker Compose
+-   [Docker](https://www.docker.com/get-started) Docker Compose
 -   [Git](https://git-scm.com/)
--   [Node.js](https://nodejs.org/) a npm (pro případný lokální vývoj frontendu)
--   [Python](https://www.python.org/) (pro případný lokální vývoj backendu)
+-   [Node.js](https://nodejs.org/) npm (for local frontend development)
+-   [Python](https://www.python.org/) (for local backend development)
 
-### 1. Klonování repozitáře
 
-```bash
-git clone <URL_VAŠEHO_REPOZITÁŘE>
-cd agent-system
-```
+### 1. Run with Docker Compose (recommended)
 
-### 2. Konfigurace prostředí
-
-Projekt vyžaduje `.env` soubory pro backend i frontend.
-
-**Backend:**
-Vytvoř soubor `backend/.env` a vlož do něj potřebné klíče:
-```env
-# backend/.env
-DATABASE_URL="postgresql+asyncpg://test_user:test123@db:5432/MAS_system_db"
-SECRET_KEY="<VAŠ_TAJNÝ_KLÍČ_PRO_JWT>"
-OPENAI_API_KEY="<VAŠ_OPENAI_API_KLÍČ>"
-TAVILY_API_KEY="<VAŠ_TAVILY_API_KLÍČ>"
-# ... další klíče
-```
-
-**Frontend:**
-Vytvoř soubor `frontend/.env` a nastav URL backendu:
-```env
-# frontend/.env
-VITE_API_URL=http://127.0.0.1:8000
-```
-
-### 3. Spuštění pomocí Docker Compose (doporučeno)
-
-Tento příkaz spustí backend, frontend i databázi v oddělených kontejnerech.
+This command will run backend, frontend and database in seperate containers.
 
 ```bash
 docker-compose up --build
 ```
 
--   **Backend API** bude dostupné na `http://localhost:8000`
--   **Frontend aplikace** bude dostupná na `http://localhost:5173`
--   **API dokumentace** (Swagger) je na `http://localhost:8000/docs`
+-   **Backend API** will be available at `http://localhost:8000`
+-   **Frontend app** will be available at `http://localhost:5173`
+-   **API documentation** (Swagger) will be available at `http://localhost:8000/docs`
 
 
-
-### 4. Lokální spuštění (bez Dockeru)
+### 4. Local Setup (without Dockeru)
 
 #### Backend
 
-1.  Přejdi do složky `backend`.
-2.  Vytvoř a aktivuj virtuální prostředí:
+1.  Navigate to the backend folder `backend`.
+2.  Create and activate virtual environment:
     ```bash
     python -m venv venv
     source venv/bin/activate  # Na Windows: venv\Scripts\activate
     ```
-3.  Nainstaluj závislosti:
+3.  Install dependecies:
     ```bash
     pip install -r requirements.txt
     ```
-4.  Spusť databázi (např. přes Docker nebo lokálně).
-5.  Aplikuj databázové migrace:
+4.  Run the database (e.g., via Docker or locally).
+5.  Apply database migration:
     ```bash
     alembic upgrade head
     ```
-6.  Spusť FastAPI server:
+6.  Run FastApi server:
     ```bash
     uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
     ```
 
 #### Frontend
 
-1.  Přejdi do složky `frontend`.
-2.  Nainstaluj závislosti:
+1.  Navigate to the frontend folder `frontend`.
+2.  Install dependecies:
     ```bash
     npm install
     ```
-3.  Spusť vývojový server:
+3.  Run development server:
     ```bash
     npm run dev
     ```
 
 ---
 
-## Databázové migrace (Alembic)
+## Database migration (Alembic)
 
-Pokud provedete změny v SQLAlchemy modelech (`backend/app/db/models.py`), je potřeba vygenerovat a aplikovat novou migraci.
+If you make changes to SQLAlchemy moodels (`backend/app/db/models.py`), you need to generate and apply a new migration.
 
-1.  Vygeneruj migrační soubor (spusť ve složce `backend`):
+1.  Generate migration file (run in folder `backend`):
     ```bash
     alembic revision --autogenerate -m "Popis změn"
     ```
-2.  Aplikuj migraci na databázi:
+2.  Apply migration on database:
     ```bash
     alembic upgrade head
     ```
