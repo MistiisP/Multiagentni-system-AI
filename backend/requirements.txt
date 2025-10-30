@@ -7,8 +7,8 @@ pydantic[email]
 httpx
 requests
 langgraph
-langchain
-langchain-core
+langchain==0.3.26
+langchain-core==0.3.66
 python-dotenv
 websockets
 serpapi
@@ -25,9 +25,9 @@ ddgs
 graphviz
 pygraphviz
 networkx
-langchain-anthropic
-langchain-community
-langchain-openai
+langchain-anthropic==0.3.16
+langchain-community==0.3.26
+langchain-openai==0.3.25
 bcrypt
 transformers
 sentencepiece
