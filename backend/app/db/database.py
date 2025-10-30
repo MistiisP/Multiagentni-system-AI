@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker, declarative_base
 
-DATABASE_URL = "postgresql+asyncpg://test_user:test123@127.0.0.1:5433/MAS_system_db"
+DATABASE_URL = "postgresql+asyncpg://postgres:postgres@db:5432/agent_system"
 
 engine = create_async_engine(DATABASE_URL, echo=True) #echo=True logs all SQL queries
 

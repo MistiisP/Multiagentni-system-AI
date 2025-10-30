@@ -1,4 +1,4 @@
-# load .env file and set environment variables
+"""# load .env file and set environment variables
 import os
 from dotenv import load_dotenv
 from pathlib import Path
@@ -13,3 +13,4 @@ DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+asyncpg://user:password@db/
 
 DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key")
+"""
