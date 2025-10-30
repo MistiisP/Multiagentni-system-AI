@@ -68,8 +68,3 @@ export default tseslint.config([
 ])
 ```
 
-# Boxicons 
-- npm install boxicons --save
-- import 'boxicons/css/boxicons.min.css';
-- <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-
