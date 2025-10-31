@@ -24,7 +24,7 @@ const LoginForm: React.FC = () => {
 
   return (
     <div className="login-container">
-      <h2>Log In</h2>
+      <h2>Přihlášení</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <input type="text" id="username" value={username} placeholder="Username" onChange={(e) => setUsername(e.target.value)} required />
@@ -34,14 +34,14 @@ const LoginForm: React.FC = () => {
           <input type="password" id="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required/>
           <i className="bx bx-lock-alt"></i> 
         </div>
-        <button type="submit">Log In</button>
+        <button type="submit">Přihlásit</button>
           {error && (
             <div className="error-message" style={{ color: 'red', marginTop: '10px', fontWeight: '500' }}>
               {error}
             </div> 
           )}
       </form>
-      <p>Nemáte účet?<a href="/signup">Zaregistrujte se</a></p>
+      <p>Nemáte účet?<a href="/signup"> Zaregistrujte se</a></p>
     </div>
   );
 };

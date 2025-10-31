@@ -55,16 +55,18 @@ async def register_user(
         - Raises 400 if the email or username already exists.
     """
     query = select(User).where(User.email == user_data.email)
-    existing_user = await db.execute(query)
-    if existing_user.scalars().first():
+    result = await db.execute(query)
+    existing_user = result.scalars().first()
+    if existing_user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Uživatel s tímto emailem již existuje",
         )
     
     query = select(User).where(User.name == user_data.name)
-    existing_user = await db.execute(query)
-    if existing_user.scalars().unique():
+    result = await db.execute(query)
+    existing_user = result.scalars().first()
+    if existing_user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Uživatel s tímto jménem už existuje",

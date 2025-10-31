@@ -15,6 +15,7 @@ import { ToolsProvider } from "./services/toolsContext";
 import 'boxicons/css/boxicons.min.css';
 import './css/App.css'
 import LoadingLogo from "./components/LoadingLogo";
+import About from "./pages/About";
 
 
 function App() {
@@ -25,7 +26,16 @@ function App() {
   }
 
   if (!user) {
-    return <LogIn />;
+    return (
+      <Routes>
+        <Route path="/about" element={<About />} />
+        <Route path="/login" element={<LogIn />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/home" element={<Home />} />
+        <Route path="/" element={<Home />} />
+        <Route path="*" element={<LogIn />} />
+      </Routes>
+    );
   }
   return (
     <ChatProvider>
@@ -37,6 +47,7 @@ function App() {
                 <Routes>
                   <Route path="/" element={<Home />} />
                   <Route path="/home" element={<Home />} />
+                  <Route path="/about" element={<About />} />
                   <Route path="/login" element={<LogIn />} />
                   <Route path="/signup" element={<SignUp />} />
                   <Route path="/dashboard" element={<Dashboard />} />

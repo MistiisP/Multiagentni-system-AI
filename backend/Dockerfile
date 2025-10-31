@@ -20,10 +20,10 @@ COPY . .
 
 ENV PYTHONUNBUFFERED=1
 
-CMD ["sh", "-c", "\
-    until pg_isready -h db -p 5432; do \
-        echo 'Waiting for database...'; \
-        sleep 2; \
-    done; \
+CMD bash -c "\
+    echo 'Waiting for database...' && \
+    until pg_isready -h db -p 5432 -U postgres > /dev/null 2>&1; do sleep 1; done && \
+    echo 'Database is ready, running migrations...' && \
     alembic upgrade head && \
-    uvicorn app.main:app --host 0.0.0.0 --port 8000"]
+    echo 'Starting backend...' && \
+    uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload" 

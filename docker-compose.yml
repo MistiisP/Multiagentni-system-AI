@@ -27,8 +27,10 @@ services:
       - "5173:5173"
     volumes:
       - ./frontend:/app
+      - /app/node_modules
     depends_on:
       - backend
+    command: npx vite --host
 
 volumes:
   postgres_data:

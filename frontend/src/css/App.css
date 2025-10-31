@@ -8,11 +8,7 @@
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
   
-  background: url('../assets/BackgroundHome.jpg') no-repeat;
-          
-  background-attachment: fixed;
-
-
+ 
 
 
   text-align: center;
@@ -25,6 +21,14 @@
  
 }
 
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+  background: url('../assets/BackgroundHome.jpg') no-repeat center center fixed;
+  background-size: cover;
+}
 
 
 a {
@@ -75,7 +79,6 @@ h4 {
 }
 
 .footer-content {
-  max-width: 1200px;
   margin: 0 auto;
 }
 
