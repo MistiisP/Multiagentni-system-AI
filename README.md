@@ -79,7 +79,7 @@ docker-compose up --build
 -   **API documentation** (Swagger) will be available at `http://localhost:8000/docs`
 
 
-### 4. Local Setup (without Dockeru)
+### 2. Local Setup (without Docker)
 
 #### Backend
 
