@@ -115,7 +115,7 @@ async def websocket_run_graph(
                 "duration_ms": duration,
                 "tokens_used": tokens,
                 "input": str(input_data),
-                "output": str(output_data)[:600] if output_data else "N/A",
+                "output": str(output_data) if output_data else "N/A",
                 "started_at": started_at,
                 "ended_at": ended_at,
                 "timestamp": datetime.now().isoformat()
