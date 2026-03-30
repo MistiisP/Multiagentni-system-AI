@@ -24,7 +24,6 @@ langgraph-checkpoint-postgres==2.0.25
 beautifulsoup4==4.12.3
 duckduckgo-search==8.1.1
 graphviz==0.20.3
-pygraphviz==1.14
 networkx==3.5
 langchain-anthropic==0.3.16
 langchain-community==0.3.26
