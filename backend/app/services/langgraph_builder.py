@@ -1,4 +1,5 @@
 from datetime import datetime
+from pyexpat.errors import messages
 import time
 import os
 import re
@@ -21,7 +22,7 @@ from langchain_core.messages import ToolMessage
 from ..db import models
 from ..utils.tools import TOOL_IMPLEMENTATIONS
 
-MAX_DELEGATIONS_PER_AGENT = 3
+MAX_DELEGATIONS_PER_AGENT = 6
 load_dotenv()
 
 
@@ -142,7 +143,7 @@ PRAVIDLA ROZHODOVÁNÍ:
    - nemáš ověřené výstupy (např. data → analýza → forma → finalizace).
 6. Specialisté nemají vytvářet finální odpověď uživateli – pouze dílčí výsledky (data, analýza, návrh, kód, formátování…).
 7. Finální odpověď generuj až tehdy, když máš všechny potřebné podklady.
-8. Teprve poté zavolej finish_task a vrať hotový výstup.
+8. Poté zavolej finish_task a vrať hotový výstup.
 
 =========================
 Dostupní specialisté:
@@ -236,6 +237,15 @@ async def build_langgraph_from_db(graph_id: int, db: AsyncSession):
         current_task = state.get("current_task", "")
         last_called_specialist = state.get("last_called_specialist", None)
         
+        
+        print(f"[DEBUG COMPACT] Total messages: {len(messages)}")
+        for idx, msg in enumerate(messages):
+            msg_type = type(msg).__name__
+            has_tool_calls = hasattr(msg, 'tool_calls') and msg.tool_calls
+            tool_call_id = getattr(msg, 'tool_call_id', None)
+            print(f"  [{idx}] {msg_type}, tool_calls={has_tool_calls}, tool_call_id={tool_call_id}")
+        
+    
         compact = []
         if messages and isinstance(messages[0], HumanMessage):
             compact.append(messages[0])
@@ -244,21 +254,41 @@ async def build_langgraph_from_db(graph_id: int, db: AsyncSession):
             msg = messages[i]
             
             if isinstance(msg, AIMessage) and msg.tool_calls:
-                compact.append(msg)
-                if i + 1 < len(messages) and isinstance(messages[i + 1], ToolMessage):
-                    compact.append(messages[i + 1])
-                    i += 2
+                tool_call_ids = [tc['id'] for tc in msg.tool_calls]
+                
+                responses_found = {}
+                for j in range(i + 1, len(messages)):
+                    if isinstance(messages[j], ToolMessage):
+                        if messages[j].tool_call_id in tool_call_ids:
+                            responses_found[messages[j].tool_call_id] = messages[j]
+                    elif isinstance(messages[j], AIMessage):
+                        break
+                
+                if len(responses_found) == len(tool_call_ids):
+                    compact.append(msg)
+                    for tc_id in tool_call_ids:
+                        compact.append(responses_found[tc_id])
+                    
+                    print(f"[COMPACT] Added AIMessage with {len(tool_call_ids)} tool_calls + responses at index {i}")
+                    i += len(tool_call_ids) + 1  
                     continue
                 else:
+                    missing = set(tool_call_ids) - set(responses_found.keys())
+                    print(f"[COMPACT SKIP] AIMessage with incomplete tool_call responses at index {i}")
+                    print(f"  Missing responses for: {missing}")
                     i += 1
-            
-            if isinstance(msg, (AIMessage, ToolMessage, HumanMessage)):
+                    continue
+
+            if isinstance(msg, (AIMessage, HumanMessage)):
                 compact.append(msg)
             
             i += 1
         
-        if len(compact) > 20:
-            compact = [compact[0]] + compact[-19:]
+        
+        print(f"[DEBUG COMPACT] Final compact length: {len(compact)}")
+        for idx, msg in enumerate(compact):
+            print(f"  [{idx}] {type(msg).__name__}")  
+        
         
         specialist_outputs = []
         for msg in messages:
@@ -357,7 +387,7 @@ async def build_langgraph_from_db(graph_id: int, db: AsyncSession):
         audit_input = f"Úkol: {current_task}"
         
         if messages:
-            last_msg = messages[-1]
+            last_msg = messages[-1] if messages else None
             if isinstance(last_msg, ToolMessage):
                 audit_input = f"Zpracovávám výstup od '{last_called_specialist}': {last_msg.content[:200]}..."
             elif isinstance(last_msg, HumanMessage):
