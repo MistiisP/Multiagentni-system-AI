@@ -53,6 +53,21 @@ const getLayoutedElements = (nodes: any[], edges: any[], direction = 'TB') => {
 const LanggraphViz: React.FC = () => {
   const { langgraphJson, executionPath } = useChat();
 
+  const hasValidGraph =
+    langgraphJson &&
+    typeof langgraphJson === "object" &&
+    Array.isArray((langgraphJson as any).nodes) &&
+    Array.isArray((langgraphJson as any).edges);
+
+  if (!hasValidGraph) {
+    return (
+      <div style={{ padding: "12px", color: "#b91c1c", background: "#fef2f2", borderRadius: "8px" }}>
+        Nemáte vložený graf pro tento chat.
+      </div>
+    );
+  }
+
+  
   const layoutedElements = useMemo(() => {
     const safeExecutionPath = executionPath || [];
     const pathNodes = new Set(safeExecutionPath);
