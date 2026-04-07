@@ -10,17 +10,28 @@ TOOL_DEFINITION = {
         {
             "name": "query",
             "type": "string",
-            "description": "Vyhledávací dotaz pro Google Scholar."
+            "description": "Vyhledávací dotaz pro pro vyhledávání vědeckých publikací přes Google Scholar."
         }
     ]
 }
 
+def search_google_scholar(query: str) -> str:
+    """
+    Vyhledá články přes Google Scholar.
+    """
+    try:
+        api_wrapper = GoogleScholarAPIWrapper()
+        scholar_tool = GoogleScholarQueryRun(api_wrapper=api_wrapper)
+        result = scholar_tool.run(query)
+        if result and "No good Google Scholar Result was found" not in result:
+            return f"[Google Scholar Results]\n{result}"
+        return "No good Google Scholar Result was found. Try refining your search query."
+    except Exception as e:
+        return f"Error searching Google Scholar: {str(e)}"
+        
 def get_tool() -> Tool:
-    api_wrapper = GoogleScholarAPIWrapper()
-    scholar_tool = GoogleScholarQueryRun(api_wrapper=api_wrapper)
-    
     return Tool(
         name=TOOL_DEFINITION["name"],
-        func=scholar_tool.run,
+        func=search_google_scholar,
         description=TOOL_DEFINITION["description"]
     )
